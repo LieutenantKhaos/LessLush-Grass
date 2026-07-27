@@ -4,31 +4,23 @@
 
 # Lush Grass
 
-Lush Grass is a lightweight, vanilla-style client visual mod for Minecraft
-1.21.1 on NeoForge.
+Lush Grass is a lightweight client-side visual mod that makes grass blocks and grassy landscapes look more natural and lush while preserving the vanilla style.
 
 ![Lush Grass before and after comparison](docs/images/before-after.png)
 
 ## Features
 
-- Enhances vanilla grass blocks so grasslands look lusher while retaining the
-  vanilla style.
+- Enhances vanilla grass blocks so grasslands look lusher while retaining the vanilla style.
 - Provides a connected-texture appearance for grass blocks, creating more
   natural visual transitions between adjacent grass blocks.
-- Provides complete snowy grass-block coverage for a cleaner appearance in
-  snowy environments.
-- Renders grass tufts on unobstructed grass blocks to add depth and variety to
-  grasslands.
-- Provides client-side configuration with independent controls for grass-block
-  coverage and grass-tuft rendering.
+- Provides complete snowy grass-block coverage for a cleaner appearance in snowy environments.
+- Renders grass tufts on unobstructed grass blocks to add depth and variety to grasslands.
+- Provides client-side configuration with independent controls for grass-block coverage and grass-tuft rendering.
 
 ## Requirements
 
 - Minecraft 1.21.1
-- NeoForge 21.1.152 or newer for Minecraft 1.21.1
-- Java 21
-
-Server installation is not required.
+- NeoForge 21.1.152 or newer
 
 ## Configuration
 
