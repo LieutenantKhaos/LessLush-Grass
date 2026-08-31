@@ -1,39 +1,13 @@
-<p align="center">
-  <img src="src/main/resources/icon.png" width="180" alt="Lush Grass logo">
-</p>
+A version of [Lush Grass](https://www.curseforge.com/minecraft/mc-mods/lush-grass) that tries to make the extra grass feel a little more natural.
 
-# Lush Grass
+Overview:
 
-Lush Grass is a lightweight client-side visual mod that makes grass blocks and grassy landscapes look more natural and lush while preserving the vanilla style.
+I liked the look of Lush Grass and the older [Better Foliage](https://www.curseforge.com/minecraft/mc-mods/better-foliage) mod. I felt like having lush grass everywhere made villages and player-built areas look out of place.
 
-![Lush Grass before and after comparison](docs/images/before-after.png)
+The mod tries to recognize blocks and areas that are actually being used such, as:
 
-## Features
+🏘 Villages, 🛤️ Paths 🌾 Farmland, ⚒️ Workstations, 📦 Chests, 🛢️ Barrels, 🛏️ Beds 🔔 Bells 🔥 Campfires, 🏮 Lanterns, 🐝 Beehives, 🚪 and Doors & fences.
 
-- Enhances vanilla grass blocks so grasslands look lusher while retaining the vanilla style.
-- Provides a connected-texture appearance for grass blocks, creating more
-  natural visual transitions between adjacent grass blocks.
-- Provides complete snowy grass-block coverage for a cleaner appearance in snowy environments.
-- Renders grass tufts on unobstructed grass blocks to add depth and variety to grasslands.
-- Provides client-side configuration with independent controls for grass-block coverage and grass-tuft rendering.
+The mod eliminates the grass from being rendered near those blocks.
 
-## Requirements
-
-- Minecraft 1.21.1
-- NeoForge 21.1.152 or newer
-
-## Configuration
-
-The client configuration is stored in `config/lush_grass-client.toml`.
-
-| Option | Default | Description |
-| --- | --- | --- |
-| `visuals.full_grass_block_coverage` | `true` | Improves vanilla grass blocks with continuous grass coverage. |
-| `visuals.render_grass_tufts` | `true` | Renders short grass on unobstructed vanilla grass blocks. |
-
-Changing either option refreshes the affected chunks.
-
-## License
-
-- Lush Grass is licensed under the [MIT License](LICENSE).
-- Third-party notices: [NOTICE](NOTICE)
+🤖Disclaimer: AI was used to make this mod possible.
