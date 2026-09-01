@@ -1,5 +1,4 @@
-<img width="512" height="512" alt="lesslushgrassicon512" src="https://github.com/user-attachments/assets/dbc10000-1cbc-4d4f-a7e2-fd3ff04f09fe" />
-
+<img width="512" height="512" alt="icon" src="https://github.com/user-attachments/assets/b1282f27-53ef-47db-9bf3-8712754801fc" />
 
 A version of Lush Grass that tries to make the extra grass feel a little more natural.
 
