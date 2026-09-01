@@ -28,12 +28,17 @@ final class VisualsConfigScreen extends Screen {
             Component.translatable("lush_grass.configuration.developed.radius");
     private static final Component RADIUS_TOOLTIP =
             Component.translatable("lush_grass.configuration.developed.radius.tooltip");
+    private static final Component RANDOM_ORIENTATION =
+            Component.translatable("lush_grass.configuration.visuals.randomize_tuft_orientation");
+    private static final Component RANDOM_ORIENTATION_TOOLTIP =
+            Component.translatable("lush_grass.configuration.visuals.randomize_tuft_orientation.tooltip");
 
     private final Screen parent;
     private boolean fullCoverage;
     private boolean grassTufts;
     private boolean suppressDeveloped;
     private int radius;
+    private boolean randomOrientation;
 
     VisualsConfigScreen(Screen parent) {
         super(TITLE);
@@ -42,13 +47,14 @@ final class VisualsConfigScreen extends Screen {
         this.grassTufts = ClientConfig.renderGrassTufts();
         this.suppressDeveloped = ClientConfig.suppressTuftsInDevelopedAreas();
         this.radius = ClientConfig.developedAreaRadius();
+        this.randomOrientation = ClientConfig.randomizeTuftOrientation();
     }
 
     @Override
     protected void init() {
         int buttonWidth = Math.min(310, this.width - 40);
         int left = (this.width - buttonWidth) / 2;
-        int firstRow = this.height / 2 - 58;
+        int firstRow = this.height / 2 - 70;
 
         this.addRenderableWidget(CycleButton.onOffBuilder(this.fullCoverage)
                 .withTooltip(value -> Tooltip.create(FULL_COVERAGE_TOOLTIP))
@@ -69,6 +75,10 @@ final class VisualsConfigScreen extends Screen {
                 })
                 .bounds(left, firstRow + 72, buttonWidth, 20)
                 .build();
+        this.addRenderableWidget(CycleButton.onOffBuilder(this.randomOrientation)
+                .withTooltip(value -> Tooltip.create(RANDOM_ORIENTATION_TOOLTIP))
+                .create(left, firstRow + 96, buttonWidth, 20, RANDOM_ORIENTATION,
+                        (button, value) -> this.randomOrientation = value));
         radiusButton.setTooltip(Tooltip.create(RADIUS_TOOLTIP));
         this.addRenderableWidget(radiusButton);
 
@@ -83,7 +93,7 @@ final class VisualsConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (ClientConfig.update(this.fullCoverage, this.grassTufts, this.suppressDeveloped, this.radius)) {
+        if (ClientConfig.update(this.fullCoverage, this.grassTufts, this.suppressDeveloped, this.radius, this.randomOrientation)) {
             ClientConfig.save();
             ClientConfigEvents.refreshRenderer();
         }

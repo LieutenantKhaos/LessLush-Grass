@@ -57,7 +57,8 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         );
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
 
-        emitter.pushTransform(quad -> transformTuftQuad(quad, offset, packedLight));
+        int rotation = tuftRotation(pos);
+        emitter.pushTransform(quad -> transformTuftQuad(quad, offset, packedLight, rotation));
         try {
             random.setSeed(42L);
             this.tuftModel.emitQuads(emitter, blockView, tuftPos, SHORT_GRASS_STATE, random, cullTest);
@@ -78,7 +79,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             return null;
         }
         if (!shouldRenderTuft(blockView, state, pos)) {
-            return new GeometryKey(baseKey, false, Vec3.ZERO, 0);
+            return new GeometryKey(baseKey, false, Vec3.ZERO, 0, 0);
         }
 
         BlockPos tuftPos = pos.above();
@@ -86,7 +87,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
                 tuftPos.offset(TUFT_OFFSET_SEED_X, 0, TUFT_OFFSET_SEED_Z)
         );
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
-        return new GeometryKey(baseKey, true, offset, packedLight);
+        return new GeometryKey(baseKey, true, offset, packedLight, tuftRotation(pos));
     }
 
     @Override
@@ -183,13 +184,27 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return a + (b - a) * t;
     }
 
-    private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight) {
+    private static int tuftRotation(BlockPos pos) {
+        if (!ClientConfig.randomizeTuftOrientation()) {
+            return 0;
+        }
+        return (int) (tuftHash(pos.getX() + 137, pos.getZ() - 211) * 360.0D);
+    }
+
+    private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight, int rotationDegrees) {
+        double radians = Math.toRadians(rotationDegrees);
+        float sin = (float) Math.sin(radians);
+        float cos = (float) Math.cos(radians);
         for (int vertex = 0; vertex < 4; vertex++) {
+            float x = quad.x(vertex) - 0.5F;
+            float z = quad.z(vertex) - 0.5F;
+            float rotatedX = x * cos - z * sin;
+            float rotatedZ = x * sin + z * cos;
             quad.pos(
                     vertex,
-                    quad.x(vertex) + (float) offset.x,
+                    rotatedX + 0.5F + (float) offset.x,
                     quad.y(vertex) * TUFT_HEIGHT_SCALE + (float) (1.0D + offset.y),
-                    quad.z(vertex) + (float) offset.z
+                    rotatedZ + 0.5F + (float) offset.z
             );
             quad.lightmap(vertex, packedLight);
         }
@@ -198,6 +213,6 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return true;
     }
 
-    private record GeometryKey(Object baseKey, boolean tuft, Vec3 offset, int packedLight) {
+    private record GeometryKey(Object baseKey, boolean tuft, Vec3 offset, int packedLight, int rotationDegrees) {
     }
 }
