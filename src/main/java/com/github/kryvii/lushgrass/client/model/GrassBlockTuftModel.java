@@ -191,6 +191,13 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return (int) (tuftHash(pos.getX() + 137, pos.getZ() - 211) * 360.0D);
     }
 
+    private static float tuftY(float originalY) {
+        // Vanilla short grass already uses pixel-aligned geometry. Keeping its
+        // original Y coordinates avoids vertically stretching/compressing the
+        // texture and preserves the same pixel scale as the vanilla model.
+        return ClientConfig.pixelPerfectTufts() ? originalY : originalY * TUFT_HEIGHT_SCALE;
+    }
+
     private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight, int rotationDegrees) {
         double radians = Math.toRadians(rotationDegrees);
         float sin = (float) Math.sin(radians);
@@ -203,7 +210,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             quad.pos(
                     vertex,
                     rotatedX + 0.5F + (float) offset.x,
-                    quad.y(vertex) * TUFT_HEIGHT_SCALE + (float) (1.0D + offset.y),
+                    tuftY(quad.y(vertex)) + (float) (1.0D + offset.y),
                     rotatedZ + 0.5F + (float) offset.z
             );
             quad.lightmap(vertex, packedLight);

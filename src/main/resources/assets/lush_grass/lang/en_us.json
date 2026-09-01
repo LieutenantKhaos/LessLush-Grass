@@ -13,5 +13,7 @@
   "lush_grass.configuration.developed.radius": "Developed Area Radius: %s",
   "lush_grass.configuration.developed.radius.tooltip": "How far the developed-area detector reaches around detected blocks (0–16 blocks).",
   "lush_grass.configuration.visuals.randomize_tuft_orientation": "Randomize Tuft Orientation",
-  "lush_grass.configuration.visuals.randomize_tuft_orientation.tooltip": "Gives each tuft a stable random horizontal rotation from 0° to 359°."
+  "lush_grass.configuration.visuals.randomize_tuft_orientation.tooltip": "Gives each tuft a stable random horizontal rotation from 0° to 359°.",
+  "lush_grass.configuration.visuals.pixel_perfect_tufts": "Pixel-Perfect Tufts",
+  "lush_grass.configuration.visuals.pixel_perfect_tufts.tooltip": "Keeps the tuft geometry at the vanilla grass pixel scale."
 }

@@ -7,5 +7,7 @@
   "lush_grass.configuration.visuals.full_grass_block_coverage": "更好的草方块",
   "lush_grass.configuration.visuals.full_grass_block_coverage.tooltip": "改进原版草方块的外观。",
   "lush_grass.configuration.visuals.render_grass_tufts": "更茂盛的草",
-  "lush_grass.configuration.visuals.render_grass_tufts.tooltip": "在上方无遮挡的原版草方块上渲染短草，使草地看起来更加茂盛。"
+  "lush_grass.configuration.visuals.render_grass_tufts.tooltip": "在上方无遮挡的原版草方块上渲染短草，使草地看起来更加茂盛。",
+  "lush_grass.configuration.visuals.pixel_perfect_tufts": "像素级草丛",
+  "lush_grass.configuration.visuals.pixel_perfect_tufts.tooltip": "保持草丛与原版草模型相同的像素比例。"
 }

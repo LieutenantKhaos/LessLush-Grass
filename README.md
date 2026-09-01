@@ -1,20 +1,46 @@
-<img width="512" height="512" alt="icon3512" src="https://github.com/user-attachments/assets/b3694c2f-ad74-4f99-ba38-cacca2b26ede" />
+<p align="center">
+  <img src="src/main/resources/icon.png" width="180" alt="Lush Grass logo">
+</p>
 
-A version of Lush Grass that tries to make the extra grass feel a little more natural.
+# Lush Grass
 
-Overview:
+Lush Grass is a lightweight client-side visual mod that makes grass blocks and
+grassy landscapes look more natural and lush while preserving the vanilla style.
 
-I liked the look of Lush Grass because it reminded me of the grass from Better Foliage. But I wasn't a big fan of the grass being everywhere, so I had this idea for the mod.
+![Lush Grass before and after comparison](docs/images/before-after_1.png)
 
-This mod tries to recognize blocks and areas that are actually being used such, as:
+## Features
 
-🏘 Villages, 🛤️ Paths 🌾 Farmland, ⚒️ Workstations, 📦 Chests, 🛢️ Barrels, 🛏️ Beds 🔔 Bells 🔥 Campfires, 🏮 Lanterns, 🐝 Beehives, 🚪 Doors and fences, and some other blocks that may indicate civilization.
+- Improves the appearance of vanilla grass blocks, making grasslands look lusher.
+- Renders grass tufts on unobstructed grass blocks to add depth to grasslands.
+- Provides client-side configuration with independent controls for grass-block
+  coverage and grass-tuft rendering.
+- Supports popular rendering optimization and shader mods, giving grass tufts
+  the correct shader materials and vegetation movement.
 
-The mod eliminates the grass from being rendered near those blocks. The mod also offers several configuration options and it can be edited in the config folder. However it's recommended to use Mod Menu.
+## Requirements
 
-🤖Disclaimer: AI was used to make this mod possible.
+- Minecraft 26.2
+- Fabric Loader 0.19.3 or newer
+- Fabric API 0.155.2+26.2 or newer
 
-✅Requirements:
-Fabric for Minecraft 26.2,
-Recommendations:
-ModMenu for easy configuration
+## Configuration
+
+With Mod Menu installed, open **Mods > Lush Grass > Configure**, then select
+**Visuals** to change the two rendering options in game.
+
+The client configuration is stored in `config/lush_grass-client.json`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `full_grass_block_coverage` | `true` | Improves vanilla grass blocks with continuous grass coverage. |
+| `render_grass_tufts` | `true` | Renders short grass on unobstructed vanilla grass blocks. |
+
+Changing either option refreshes the affected chunks.
+
+## License
+
+- Lush Grass is licensed under the [MIT License](LICENSE).
+- Third-party notices: [NOTICE](NOTICE)
+
+Patchy wilderness tufts: decorative grass now uses deterministic noise + position hashing, so not every grass block gets a tuft.
