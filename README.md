@@ -11,3 +11,8 @@ This mod tries to recognize blocks and areas that are actually being used such, 
 The mod eliminates the grass from being rendered near those blocks. The mod also offers several configuration options and it can be edited in the config folder. However it's recommended to use Mod Menu.
 
 🤖Disclaimer: AI was used to make this mod possible.
+
+Requirements:
+Fabric for Minecraft 26.2
+Recommendations:
+ModMenu for easy configuration
