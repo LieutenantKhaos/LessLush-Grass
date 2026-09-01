@@ -7,10 +7,10 @@
   "authors": [
     "LieutenantKhaos"
   ],
-  "contact": {
-    "homepage": "https://github.com/Kryvii/LushGrass",
-    "sources": "https://github.com/Kryvii/LushGrass",
-    "issues": "https://github.com/Kryvii/LushGrass/issues"
+   "contact": {
+    "homepage": "https://github.com/LieutenantKhaos/LessLush-Grass",
+    "sources": "https://github.com/LieutenantKhaos/LessLush-Grass",
+    "issues": "https://github.com/LieutenantKhaos/LessLush-Grass"
   },
   "license": "MIT",
   "icon": "icon.png",
