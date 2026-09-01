@@ -15,7 +15,7 @@ The mod eliminates the grass from being rendered near those blocks. The mod also
 
 🤖Disclaimer: AI was used to make this mod possible.
 
-Requirements:
-Fabric for Minecraft 26.2
+✅Requirements:
+Fabric for Minecraft 26.2,
 Recommendations:
 ModMenu for easy configuration
