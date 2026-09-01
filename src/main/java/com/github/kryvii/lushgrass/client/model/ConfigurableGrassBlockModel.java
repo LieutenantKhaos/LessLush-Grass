@@ -1,130 +1,92 @@
 package com.github.kryvii.lushgrass.client.model;
 
 import com.github.kryvii.lushgrass.config.ClientConfig;
-import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.List;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.ItemOverrides;
-import net.minecraft.client.renderer.block.model.ItemTransforms;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.BakedModel;
+import java.util.function.Predicate;
+import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
+import net.fabricmc.fabric.api.client.renderer.v1.model.FabricBlockStateModel;
+import net.minecraft.client.renderer.block.BlockAndTintGetter;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.client.ChunkRenderTypeSet;
-import net.neoforged.neoforge.client.model.BakedModelWrapper;
-import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.common.util.TriState;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
-@SuppressWarnings("deprecation")
-public class ConfigurableGrassBlockModel extends BakedModelWrapper<BakedModel> {
-    private final BakedModel fullCoverageModel;
+public class ConfigurableGrassBlockModel implements BlockStateModel, FabricBlockStateModel {
+    private final BlockStateModel fullCoverageModel;
+    private final BlockStateModel vanillaModel;
 
-    public ConfigurableGrassBlockModel(BakedModel fullCoverageModel, BakedModel vanillaModel) {
-        super(vanillaModel);
+    public ConfigurableGrassBlockModel(BlockStateModel fullCoverageModel, BlockStateModel vanillaModel) {
         this.fullCoverageModel = fullCoverageModel;
+        this.vanillaModel = vanillaModel;
     }
 
-    protected final BakedModel activeModel() {
-        return ClientConfig.FULL_GRASS_BLOCK_COVERAGE.getAsBoolean()
-                ? this.fullCoverageModel
-                : this.originalModel;
-    }
-
-    @Override
-    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, RandomSource rand) {
-        return this.activeModel().getQuads(state, side, rand);
+    protected final BlockStateModel activeModel() {
+        return ClientConfig.fullGrassBlockCoverage() ? this.fullCoverageModel : this.vanillaModel;
     }
 
     @Override
-    public boolean useAmbientOcclusion() {
-        return this.activeModel().useAmbientOcclusion();
+    public void collectParts(RandomSource random, List<BlockStateModelPart> parts) {
+        this.activeModel().collectParts(random, parts);
     }
 
     @Override
-    public TriState useAmbientOcclusion(BlockState state, ModelData data, RenderType renderType) {
-        return this.activeModel().useAmbientOcclusion(state, data, renderType);
+    public Material.Baked particleMaterial() {
+        return this.activeModel().particleMaterial();
     }
 
     @Override
-    public boolean isGui3d() {
-        return this.activeModel().isGui3d();
+    public int materialFlags() {
+        return this.fullCoverageModel.materialFlags() | this.vanillaModel.materialFlags();
     }
 
     @Override
-    public boolean usesBlockLight() {
-        return this.activeModel().usesBlockLight();
-    }
-
-    @Override
-    public boolean isCustomRenderer() {
-        return this.activeModel().isCustomRenderer();
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleIcon() {
-        return this.activeModel().getParticleIcon();
-    }
-
-    @Override
-    public ItemTransforms getTransforms() {
-        return this.activeModel().getTransforms();
-    }
-
-    @Override
-    public ItemOverrides getOverrides() {
-        return this.activeModel().getOverrides();
-    }
-
-    @Override
-    public BakedModel applyTransform(ItemDisplayContext displayContext, PoseStack poseStack, boolean leftHand) {
-        return this.activeModel().applyTransform(displayContext, poseStack, leftHand);
-    }
-
-    @Override
-    public TextureAtlasSprite getParticleIcon(ModelData data) {
-        return this.activeModel().getParticleIcon(data);
-    }
-
-    @Override
-    public List<BakedQuad> getQuads(
-            @Nullable BlockState state,
-            @Nullable Direction side,
-            RandomSource rand,
-            ModelData extraData,
-            @Nullable RenderType renderType
-    ) {
-        return this.activeModel().getQuads(state, side, rand, extraData, renderType);
-    }
-
-    @Override
-    public ModelData getModelData(
-            BlockAndTintGetter level,
+    public void emitQuads(
+            QuadEmitter emitter,
+            BlockAndTintGetter blockView,
             BlockPos pos,
             BlockState state,
-            ModelData modelData
+            RandomSource random,
+            Predicate<@Nullable Direction> cullTest
     ) {
-        return this.activeModel().getModelData(level, pos, state, modelData);
+        fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
     }
 
     @Override
-    public ChunkRenderTypeSet getRenderTypes(BlockState state, RandomSource rand, ModelData data) {
-        return this.activeModel().getRenderTypes(state, rand, data);
+    public @Nullable Object createGeometryKey(
+            BlockAndTintGetter blockView,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random
+    ) {
+        boolean fullCoverage = ClientConfig.fullGrassBlockCoverage();
+        Object modelKey = fabricModel(fullCoverage ? this.fullCoverageModel : this.vanillaModel)
+                .createGeometryKey(blockView, pos, state, random);
+        return modelKey == null ? null : new GeometryKey(fullCoverage, modelKey);
     }
 
     @Override
-    public List<RenderType> getRenderTypes(ItemStack itemStack, boolean fabulous) {
-        return this.activeModel().getRenderTypes(itemStack, fabulous);
+    public Material.Baked particleMaterial(BlockAndTintGetter blockView, BlockPos pos, BlockState state) {
+        return fabricModel(this.activeModel()).particleMaterial(blockView, pos, state);
     }
 
     @Override
-    public List<BakedModel> getRenderPasses(ItemStack itemStack, boolean fabulous) {
-        return this.activeModel().getRenderPasses(itemStack, fabulous);
+    public int materialFlags(
+            BlockAndTintGetter blockView,
+            BlockPos pos,
+            BlockState state,
+            RandomSource random
+    ) {
+        return fabricModel(this.activeModel()).materialFlags(blockView, pos, state, random);
+    }
+
+    protected static FabricBlockStateModel fabricModel(BlockStateModel model) {
+        return (FabricBlockStateModel) model;
+    }
+
+    private record GeometryKey(boolean fullCoverage, Object modelKey) {
     }
 }

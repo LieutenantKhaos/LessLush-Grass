@@ -1,7 +1,6 @@
 {
-  "lush_grass.configuration.title": "Lush Grass",
-  "lush_grass.configuration.section.lush.grass.client.toml": "客户端",
-  "lush_grass.configuration.section.lush.grass.client.toml.title": "%s 客户端配置",
+  "lush_grass.configuration.title": "茂盛草地",
+  "lush_grass.configuration.client.title": "%s 客户端配置",
   "lush_grass.configuration.visuals": "视觉效果",
   "lush_grass.configuration.visuals.button": "配置",
   "lush_grass.configuration.visuals.tooltip": "调整客户端视觉渲染效果。",

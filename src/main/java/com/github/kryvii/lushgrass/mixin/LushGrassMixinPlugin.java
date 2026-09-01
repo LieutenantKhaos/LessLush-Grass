@@ -2,40 +2,19 @@ package com.github.kryvii.lushgrass.mixin;
 
 import java.util.List;
 import java.util.Set;
-
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 public final class LushGrassMixinPlugin implements IMixinConfigPlugin {
-    private Boolean irisSodiumMaterialOverridesAvailable;
+    private static final String SODIUM_BLOCK_RENDERER =
+            "net.caffeinemc.mods.sodium.client.render.chunk.compile.pipeline.BlockRenderer";
+    private static final String IRIS_MATERIAL_SETTINGS =
+            "net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings";
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        if (this.irisSodiumMaterialOverridesAvailable == null) {
-            this.irisSodiumMaterialOverridesAvailable = supportsIrisSodiumMaterialOverrides();
-        }
-        return this.irisSodiumMaterialOverridesAvailable;
-    }
-
-    private static boolean supportsIrisSodiumMaterialOverrides() {
-        if (!hasClassResource("net.irisshaders.iris.shaderpack.materialmap.WorldRenderingSettings")) {
-            return false;
-        }
-
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            Class<?> vertexEncoder = Class.forName(
-                    "net.irisshaders.iris.vertices.sodium.terrain.VertexEncoderInterface",
-                    false,
-                    classLoader
-            );
-            vertexEncoder.getMethod("overrideBlock", int.class);
-            vertexEncoder.getMethod("restoreBlock");
-            return true;
-        } catch (ClassNotFoundException | NoSuchMethodException | LinkageError ignored) {
-            return false;
-        }
+        return hasClassResource(SODIUM_BLOCK_RENDERER) && hasClassResource(IRIS_MATERIAL_SETTINGS);
     }
 
     private static boolean hasClassResource(String className) {

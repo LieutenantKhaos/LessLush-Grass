@@ -3,7 +3,8 @@ Copyright (c) 2026 Kryvii
 
 Lush Grass is distributed under the MIT License.
 
-This project was created from the NeoForge Mod Development Kit template.
+Earlier project scaffolding used portions of the NeoForge Mod Development Kit template.
+This branch is adapted for Fabric.
 Template portions are distributed under the following license:
 
 MIT License

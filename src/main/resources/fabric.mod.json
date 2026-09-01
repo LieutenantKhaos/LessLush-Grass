@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "lush_grass",
+  "version": "1.1.7",
+  "name": "LessLush Grass",
+  "description": "Enhances vanilla grass blocks with configurable client-side lush visuals.",
+  "authors": [
+    "LieutenantKhaos"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Kryvii/LushGrass",
+    "sources": "https://github.com/Kryvii/LushGrass",
+    "issues": "https://github.com/Kryvii/LushGrass/issues"
+  },
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.github.kryvii.lushgrass.client.LushGrassClient"
+    ],
+    "modmenu": [
+      "com.github.kryvii.lushgrass.client.config.LushGrassModMenu"
+    ]
+  },
+  "mixins": [
+    "lush_grass.client.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "=26.2",
+    "java": ">=25",
+    "fabric-api": ">=0.155.2"
+  },
+  "suggests": {
+    "modmenu": "*",
+    "sodium": "*",
+    "iris": "*"
+  }
+}
