@@ -1,5 +1,15 @@
-## 1.3.6
-- Corrected the tuft vertical origin so custom short grass renders on the top surface of the grass block instead of inside it.
+# LessLush Grass 1.3.8 Changelog
+
+## Fixed
+- Fixed a Java compilation error introduced by the fixed-height tuft change.
+- Preserved the fixed tuft height while keeping the horizontal offset and random rotation behavior unchanged.
+
+# LessLush Grass 1.3.7 Changelog
+
+## Changed
+- Grass tuft height is now fixed, so every tuft renders at the same vertical height.
+- Random horizontal placement and rotation remain unchanged.
+
 
 ## 1.3.5
 - Reworked the custom short grass model so the visible 8-pixel tuft starts exactly at the top surface of the grass block.

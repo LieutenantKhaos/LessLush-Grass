@@ -65,9 +65,13 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         }
 
         BlockPos tuftPos = pos.above();
-        Vec3 offset = SHORT_GRASS_STATE.getOffset(
+        Vec3 rawOffset = SHORT_GRASS_STATE.getOffset(
                 tuftPos.offset(TUFT_OFFSET_SEED_X, 0, TUFT_OFFSET_SEED_Z)
         );
+        // Keep the vanilla horizontal offset, but use a fixed vertical position
+        // so every tuft has exactly the same height. Keep this value final so it
+        // can safely be captured by the quad transform lambda.
+        final Vec3 offset = new Vec3(rawOffset.x, 0.0D, rawOffset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
 
         int rotation = tuftRotation(pos);
@@ -99,6 +103,9 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         Vec3 offset = SHORT_GRASS_STATE.getOffset(
                 tuftPos.offset(TUFT_OFFSET_SEED_X, 0, TUFT_OFFSET_SEED_Z)
         );
+        // Keep the vanilla horizontal offset, but use a fixed vertical position
+        // so every tuft has exactly the same height.
+        offset = new Vec3(offset.x, 0.0D, offset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
         return new GeometryKey(baseKey, true, offset, packedLight, tuftRotation(pos));
     }
