@@ -40,14 +40,20 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
     private static final BlockState SHORT_GRASS_STATE = Blocks.SHORT_GRASS.defaultBlockState();
 
     private final BlockStateModel tuftModel;
+    private final BlockStateModel shorterTuftModel;
+    private final BlockStateModel shortestTuftModel;
 
     public GrassBlockTuftModel(
             BlockStateModel fullCoverageModel,
             BlockStateModel vanillaModel,
-            BlockStateModel tuftModel
+            BlockStateModel tuftModel,
+            BlockStateModel shorterTuftModel,
+            BlockStateModel shortestTuftModel
     ) {
         super(fullCoverageModel, vanillaModel);
         this.tuftModel = tuftModel;
+        this.shorterTuftModel = shorterTuftModel;
+        this.shortestTuftModel = shortestTuftModel;
     }
 
     @Override
@@ -75,10 +81,16 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
 
         int rotation = tuftRotation(pos);
+        int variant = tuftVariant(pos);
+        BlockStateModel selectedTuftModel = switch (variant) {
+            case 1 -> this.shorterTuftModel;
+            case 2 -> this.shortestTuftModel;
+            default -> this.tuftModel;
+        };
         emitter.pushTransform(quad -> transformTuftQuad(quad, offset, packedLight, rotation));
         try {
             random.setSeed(42L);
-            this.tuftModel.emitQuads(emitter, blockView, tuftPos, SHORT_GRASS_STATE, random, cullTest);
+            selectedTuftModel.emitQuads(emitter, blockView, tuftPos, SHORT_GRASS_STATE, random, cullTest);
         } finally {
             emitter.popTransform();
         }
@@ -96,7 +108,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             return null;
         }
         if (!shouldRenderTuft(blockView, state, pos)) {
-            return new GeometryKey(baseKey, false, Vec3.ZERO, 0, 0);
+            return new GeometryKey(baseKey, false, Vec3.ZERO, 0, 0, 0);
         }
 
         BlockPos tuftPos = pos.above();
@@ -107,12 +119,15 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         // so every tuft has exactly the same height.
         offset = new Vec3(offset.x, 0.0D, offset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
-        return new GeometryKey(baseKey, true, offset, packedLight, tuftRotation(pos));
+        return new GeometryKey(baseKey, true, offset, packedLight, tuftRotation(pos), tuftVariant(pos));
     }
 
     @Override
     public int materialFlags() {
-        return super.materialFlags() | this.tuftModel.materialFlags();
+        return super.materialFlags()
+                | this.tuftModel.materialFlags()
+                | this.shorterTuftModel.materialFlags()
+                | this.shortestTuftModel.materialFlags();
     }
 
     @Override
@@ -123,7 +138,12 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             RandomSource random
     ) {
         int flags = super.materialFlags(blockView, pos, state, random);
-        return shouldRenderTuft(blockView, state, pos) ? flags | this.tuftModel.materialFlags() : flags;
+        return shouldRenderTuft(blockView, state, pos)
+                ? flags
+                | this.tuftModel.materialFlags()
+                | this.shorterTuftModel.materialFlags()
+                | this.shortestTuftModel.materialFlags()
+                : flags;
     }
 
     private static boolean shouldRenderTuft(BlockAndTintGetter blockView, BlockState state, BlockPos pos) {
@@ -211,6 +231,15 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return (int) (tuftHash(pos.getX() + 137, pos.getZ() - 211) * 360.0D);
     }
 
+    /**
+     * Selects one of the three grass artwork variants deterministically from the
+     * grass block position. Keeping the selection position-based prevents the
+     * texture from changing when chunks rebuild.
+     */
+    private static int tuftVariant(BlockPos pos) {
+        return (int) (tuftHash(pos.getX() - 503, pos.getZ() + 719) * 3.0D);
+    }
+
     private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight, int rotationDegrees) {
         double radians = Math.toRadians(rotationDegrees);
         float sin = (float) Math.sin(radians);
@@ -233,6 +262,13 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return true;
     }
 
-    private record GeometryKey(Object baseKey, boolean tuft, Vec3 offset, int packedLight, int rotationDegrees) {
+    private record GeometryKey(
+            Object baseKey,
+            boolean tuft,
+            Vec3 offset,
+            int packedLight,
+            int rotationDegrees,
+            int variant
+    ) {
     }
 }

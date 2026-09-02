@@ -1,3 +1,13 @@
+# LessLush Grass 1.3.9 Changelog
+
+## Added
+- Added two additional custom grass textures: `shorter_grass.png` and `shortest_grass.png`.
+- Grass tufts now randomly choose between the three custom grass textures for more visual variation.
+
+## Changed
+- Texture selection is deterministic per grass block, so variants stay stable when chunks rebuild.
+- Existing fixed tuft height, natural density, developed-area suppression, and random rotation behavior are unchanged.
+
 # LessLush Grass 1.3.8 Changelog
 
 ## Fixed
