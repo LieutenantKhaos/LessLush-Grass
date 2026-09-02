@@ -23,7 +23,20 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
 
     private static final int TUFT_OFFSET_SEED_X = 17;
     private static final int TUFT_OFFSET_SEED_Z = 31;
-    private static final float TUFT_HEIGHT_SCALE = 0.4375F;
+    // Keep the 1.1.9 vanilla-grass feel, but give the tuft a little
+    // horizontal breathing room so the vanilla texture does not read as
+    // unnaturally stretched when viewed at low height.
+    // Match the vanilla texture's aspect ratio more closely. The tuft is
+    // intentionally shorter than vanilla, so keeping nearly full width makes
+    // the texture look stretched. 65% width is a conservative compromise:
+    // noticeably tighter without turning each tuft into a tiny spike.
+    // Scale the vanilla tuft uniformly. This is the important difference
+    // from the earlier experiments: shortening only Y squashes the model
+    // while leaving its texture width unchanged, which makes the vanilla
+    // blades look stretched. Equal X/Z/Y scaling preserves the vanilla
+    // proportions while making the whole tuft smaller.
+    private static final float TUFT_HORIZONTAL_SCALE = 1.0F;
+    private static final float TUFT_VERTICAL_SCALE = 1.0F;
     private static final BlockState SHORT_GRASS_STATE = Blocks.SHORT_GRASS.defaultBlockState();
 
     private final BlockStateModel tuftModel;
@@ -191,26 +204,19 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return (int) (tuftHash(pos.getX() + 137, pos.getZ() - 211) * 360.0D);
     }
 
-    private static float tuftY(float originalY) {
-        // Vanilla short grass already uses pixel-aligned geometry. Keeping its
-        // original Y coordinates avoids vertically stretching/compressing the
-        // texture and preserves the same pixel scale as the vanilla model.
-        return ClientConfig.pixelPerfectTufts() ? originalY : originalY * TUFT_HEIGHT_SCALE;
-    }
-
     private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight, int rotationDegrees) {
         double radians = Math.toRadians(rotationDegrees);
         float sin = (float) Math.sin(radians);
         float cos = (float) Math.cos(radians);
         for (int vertex = 0; vertex < 4; vertex++) {
-            float x = quad.x(vertex) - 0.5F;
-            float z = quad.z(vertex) - 0.5F;
+            float x = (quad.x(vertex) - 0.5F) * TUFT_HORIZONTAL_SCALE;
+            float z = (quad.z(vertex) - 0.5F) * TUFT_HORIZONTAL_SCALE;
             float rotatedX = x * cos - z * sin;
             float rotatedZ = x * sin + z * cos;
             quad.pos(
                     vertex,
                     rotatedX + 0.5F + (float) offset.x,
-                    tuftY(quad.y(vertex)) + (float) (1.0D + offset.y),
+                    quad.y(vertex) * TUFT_VERTICAL_SCALE + (float) (1.0D + offset.y),
                     rotatedZ + 0.5F + (float) offset.z
             );
             quad.lightmap(vertex, packedLight);

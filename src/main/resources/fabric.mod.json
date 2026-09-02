@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
   "id": "lush_grass",
-  "version": "1.2.0",
+  "version": "1.3.4",
   "name": "LessLush Grass",
   "description": "Enhances vanilla grass blocks with configurable client-side lush visuals.",
   "authors": [
     "LieutenantKhaos"
   ],
   "contact": {
-    "homepage": "https://github.com/Kryvii/LushGrass",
-    "sources": "https://github.com/Kryvii/LushGrass",
-    "issues": "https://github.com/Kryvii/LushGrass/issues"
+    "homepage": "https://github.com/LieutenantKhaos/LessLush-Grass",
+    "sources": "https://github.com/LieutenantKhaos/LessLush-Grass",
+    "issues": "https://github.com/LieutenantKhaos/LessLush-Grass/issues"
   },
   "license": "MIT",
   "icon": "icon.png",

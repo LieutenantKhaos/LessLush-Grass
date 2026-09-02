@@ -32,10 +32,6 @@ final class VisualsConfigScreen extends Screen {
             Component.translatable("lush_grass.configuration.visuals.randomize_tuft_orientation");
     private static final Component RANDOM_ORIENTATION_TOOLTIP =
             Component.translatable("lush_grass.configuration.visuals.randomize_tuft_orientation.tooltip");
-    private static final Component PIXEL_PERFECT =
-            Component.translatable("lush_grass.configuration.visuals.pixel_perfect_tufts");
-    private static final Component PIXEL_PERFECT_TOOLTIP =
-            Component.translatable("lush_grass.configuration.visuals.pixel_perfect_tufts.tooltip");
 
     private final Screen parent;
     private boolean fullCoverage;
@@ -43,7 +39,6 @@ final class VisualsConfigScreen extends Screen {
     private boolean suppressDeveloped;
     private int radius;
     private boolean randomOrientation;
-    private boolean pixelPerfectTufts;
 
     VisualsConfigScreen(Screen parent) {
         super(TITLE);
@@ -53,14 +48,13 @@ final class VisualsConfigScreen extends Screen {
         this.suppressDeveloped = ClientConfig.suppressTuftsInDevelopedAreas();
         this.radius = ClientConfig.developedAreaRadius();
         this.randomOrientation = ClientConfig.randomizeTuftOrientation();
-        this.pixelPerfectTufts = ClientConfig.pixelPerfectTufts();
     }
 
     @Override
     protected void init() {
         int buttonWidth = Math.min(310, this.width - 40);
         int left = (this.width - buttonWidth) / 2;
-        int firstRow = this.height / 2 - 82;
+        int firstRow = this.height / 2 - 70;
 
         this.addRenderableWidget(CycleButton.onOffBuilder(this.fullCoverage)
                 .withTooltip(value -> Tooltip.create(FULL_COVERAGE_TOOLTIP))
@@ -88,11 +82,6 @@ final class VisualsConfigScreen extends Screen {
         radiusButton.setTooltip(Tooltip.create(RADIUS_TOOLTIP));
         this.addRenderableWidget(radiusButton);
 
-        this.addRenderableWidget(CycleButton.onOffBuilder(this.pixelPerfectTufts)
-                .withTooltip(value -> Tooltip.create(PIXEL_PERFECT_TOOLTIP))
-                .create(left, firstRow + 120, buttonWidth, 20, PIXEL_PERFECT,
-                        (button, value) -> this.pixelPerfectTufts = value));
-
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose())
                 .bounds(this.width / 2 - 100, this.height - 28, 200, 20)
                 .build());
@@ -104,7 +93,7 @@ final class VisualsConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (ClientConfig.update(this.fullCoverage, this.grassTufts, this.suppressDeveloped, this.radius, this.randomOrientation, this.pixelPerfectTufts)) {
+        if (ClientConfig.update(this.fullCoverage, this.grassTufts, this.suppressDeveloped, this.radius, this.randomOrientation)) {
             ClientConfig.save();
             ClientConfigEvents.refreshRenderer();
         }
