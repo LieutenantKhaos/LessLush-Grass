@@ -216,7 +216,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             quad.pos(
                     vertex,
                     rotatedX + 0.5F + (float) offset.x,
-                    quad.y(vertex) * TUFT_VERTICAL_SCALE + (float) (1.0D + offset.y),
+                    quad.y(vertex) * TUFT_VERTICAL_SCALE + (float) (1.1D + offset.y),
                     rotatedZ + 0.5F + (float) offset.z
             );
             quad.lightmap(vertex, packedLight);
