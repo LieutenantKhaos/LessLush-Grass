@@ -1,49 +1,32 @@
-<p align="center">
-  <img src="src/main/resources/icon.png" width="180" alt="Lush Grass logo">
-</p>
+# LessLush Grass
 
-# Lush Grass
+A version of [Lush Grass](https://www.curseforge.com/minecraft/mc-mods/lush-grass) that tries to make the extra grass feel a little more natural.
 
-Lush Grass is a lightweight client-side visual mod that makes grass blocks and
-grassy landscapes look more natural and lush while preserving the vanilla style.
+## Overview
 
-![Lush Grass before and after comparison](docs/images/before-after_1.png)
+I liked the look of Lush Grass because it reminded me of the grass from [Better Foliage](https://www.curseforge.com/minecraft/mc-mods/better-foliage). But I wasn't a big fan of the grass being everywhere, so I had this idea for the mod.
+
+This mod tries to recognize blocks and areas that are actually being used, such as:
+
+Villages, paths, farmland, workstations, chests, barrels, beds, bells, campfires, lanterns, beehives, doors and fences, and some other blocks that may indicate civilization.
+
+The mod suppresses the grass from being rendered near those blocks, helping keep developed areas looking a little cleaner and more natural.
+
+The mod also offers several configuration options and can be edited in the config folder. However, it's recommended to use [Mod Menu](https://modrinth.com/mod/modmenu).
 
 ## Features
 
-- Improves the appearance of vanilla grass blocks, making grasslands look lusher.
-- Renders grass tufts on unobstructed grass blocks to add depth to grasslands.
-- Provides client-side configuration with independent controls for grass-block
-  coverage and grass-tuft rendering.
-- Supports popular rendering optimization and shader mods, giving grass tufts
-  the correct shader materials and vegetation movement.
+- Natural-looking grass tufts
+- Multiple grass tuft heights for visual variation
+- Randomized tuft orientation
+- Suppression around developed areas
+- Adjustable developed-area detection radius
+- Configurable through Mod Menu or the config file
 
-### Custom grass texture
-The decorative tuft uses a custom `short_grass.png` texture included with the mod. The texture is kept separate from Minecraft's vanilla asset so it can be adjusted independently.
+## Recommendations
 
-## Requirements
+Works well with [Rainbow's Foliage w/ Polytone](https://modrinth.com/resourcepack/rainbows-foliage).
 
-- Minecraft 26.2
-- Fabric Loader 0.19.3 or newer
-- Fabric API 0.155.2+26.2 or newer
+## Credits
 
-## Configuration
-
-With Mod Menu installed, open **Mods > Lush Grass > Configure**, then select
-**Visuals** to change the two rendering options in game.
-
-The client configuration is stored in `config/lush_grass-client.json`.
-
-| Option | Default | Description |
-| --- | --- | --- |
-| `full_grass_block_coverage` | `true` | Improves vanilla grass blocks with continuous grass coverage. |
-| `render_grass_tufts` | `true` | Renders short grass on unobstructed vanilla grass blocks. |
-
-Changing either option refreshes the affected chunks.
-
-## License
-
-- Lush Grass is licensed under the [MIT License](LICENSE).
-- Third-party notices: [NOTICE](NOTICE)
-
-Patchy wilderness tufts: decorative grass now uses deterministic noise + position hashing, so not every grass block gets a tuft.
+Originally based on [Lush Grass](https://www.curseforge.com/minecraft/mc-mods/lush-grass).
