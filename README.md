@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.png" width="512">
+</p>
+
 # LessLush Grass
 
 A version of [Lush Grass](https://www.curseforge.com/minecraft/mc-mods/lush-grass) that tries to make the extra grass feel a little more natural.
