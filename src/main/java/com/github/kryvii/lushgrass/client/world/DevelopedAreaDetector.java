@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +43,13 @@ public final class DevelopedAreaDetector {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null || !minecraft.isRunning()) {
             return false;
+        }
+
+        // Flowing water is an immediate-use environmental condition, so check it
+        // before the developed-area cache. This also keeps water suppression
+        // independent of the configurable developed-area radius.
+        if (hasFlowingFluidTouching(world, origin)) {
+            return true;
         }
 
         int radius = ClientConfig.developedAreaRadius();
@@ -82,6 +90,58 @@ public final class DevelopedAreaDetector {
                 cachedRadius = radius;
             }
         }
+    }
+
+    /**
+     * Checks the six blocks directly touching the grass block for flowing water
+     * or flowing lava.
+     *
+     * Source water and source lava are ignored beside the grass, but a source
+     * directly above the grass suppresses only the tuft underneath it. A
+     * flowing fluid suppresses a tuft whenever it directly touches the grass.
+     */
+    private static boolean hasFlowingFluidTouching(BlockAndTintGetter world, BlockPos origin) {
+        BlockPos.MutableBlockPos check = new BlockPos.MutableBlockPos();
+
+        // A source directly above the grass hides only the grass underneath it.
+        check.set(origin.getX(), origin.getY() + 1, origin.getZ());
+        BlockState above = world.getBlockState(check);
+        if (isFluid(above)) {
+            return true;
+        }
+
+        // Flowing fluid directly below the grass.
+        check.set(origin.getX(), origin.getY() - 1, origin.getZ());
+        if (isFlowingFluid(world.getBlockState(check))) {
+            return true;
+        }
+
+        // Four horizontal neighbors. Only flowing fluid counts here.
+        check.set(origin.getX() + 1, origin.getY(), origin.getZ());
+        if (isFlowingFluid(world.getBlockState(check))) {
+            return true;
+        }
+
+        check.set(origin.getX() - 1, origin.getY(), origin.getZ());
+        if (isFlowingFluid(world.getBlockState(check))) {
+            return true;
+        }
+
+        check.set(origin.getX(), origin.getY(), origin.getZ() + 1);
+        if (isFlowingFluid(world.getBlockState(check))) {
+            return true;
+        }
+
+        check.set(origin.getX(), origin.getY(), origin.getZ() - 1);
+        return isFlowingFluid(world.getBlockState(check));
+    }
+
+    private static boolean isFluid(BlockState state) {
+        return state.is(Blocks.WATER) || state.is(Blocks.LAVA);
+    }
+
+    private static boolean isFlowingFluid(BlockState state) {
+        return isFluid(state) && state.getValue(BlockStateProperties.LEVEL) > 0;
     }
 
     private static boolean calculate(BlockAndTintGetter world, BlockPos origin, int radius) {
