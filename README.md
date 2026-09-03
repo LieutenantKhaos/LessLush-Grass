@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="src/main/resources/icon.png" width="256">
+  <img src="src/main/resources/icon.png?v=2" width="256">
 </p>
 
 # LessLush Grass
