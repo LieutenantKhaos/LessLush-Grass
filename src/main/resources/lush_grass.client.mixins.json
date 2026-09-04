@@ -5,8 +5,7 @@
   "package": "com.github.kryvii.lushgrass.client.mixin",
   "plugin": "com.github.kryvii.lushgrass.mixin.LushGrassMixinPlugin",
   "client": [
-    "sodium.SodiumQuadViewMixin",
-    "sodium.SodiumBlockRendererMixin"
+    "SodiumBlockRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1

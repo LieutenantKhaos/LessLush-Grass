@@ -2,11 +2,13 @@ package com.github.kryvii.lushgrass.client.model;
 
 import com.github.kryvii.lushgrass.config.ClientConfig;
 import com.github.kryvii.lushgrass.client.world.DevelopedAreaDetector;
+import java.util.List;
 import java.util.function.Predicate;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
+import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
@@ -57,6 +59,11 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
     }
 
     @Override
+    public void collectParts(RandomSource random, List<BlockStateModelPart> parts) {
+        super.collectParts(random, parts);
+    }
+
+    @Override
     public void emitQuads(
             QuadEmitter emitter,
             BlockAndTintGetter blockView,
@@ -65,9 +72,13 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             RandomSource random,
             Predicate<@Nullable Direction> cullTest
     ) {
-        fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
-        if (!shouldRenderTuft(blockView, state, pos)) {
-            return;
+
+    fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
+
+        // Fabric uses BlockAndTintGetter.EMPTY when rebuilding model geometry
+        // for the block-breaking overlay. Keep decorative tufts out of that pass.
+        if (blockView == BlockAndTintGetter.EMPTY || !shouldRenderTuft(blockView, state, pos)) {
+           return;
         }
 
         BlockPos tuftPos = pos.above();
