@@ -1,5 +1,14 @@
 # LessLush Grass Changelog
 
+## 1.4.0a
+
+### Changed
+- Reworked developed-area detection to consider the strength and proximity of nearby development indicators.
+- Stronger signs of player use now have more influence than isolated decorative blocks.
+- Added torches and wall torches as medium-strength development indicators.
+- Developed areas now build up from clusters of nearby indicators instead of relying only on the nearest developed block.
+- Kept the existing developed-area radius, natural boundary noise, caching, and fluid suppression behavior.
+
 ## 1.3.12
 
 ### Fixed
