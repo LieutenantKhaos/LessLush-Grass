@@ -1,5 +1,3 @@
-# LessLush Grass Changelog
-
 ## 1.4.1b
 
 ### Added
