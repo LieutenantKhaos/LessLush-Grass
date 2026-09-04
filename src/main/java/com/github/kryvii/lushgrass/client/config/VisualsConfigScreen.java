@@ -3,6 +3,7 @@ package com.github.kryvii.lushgrass.client.config;
 import com.github.kryvii.lushgrass.client.event.ClientConfigEvents;
 import com.github.kryvii.lushgrass.config.ClientConfig;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
@@ -69,18 +70,31 @@ final class VisualsConfigScreen extends Screen {
                 .create(left, firstRow + 48, buttonWidth, 20, SUPPRESS_DEVELOPED,
                         (button, value) -> this.suppressDeveloped = value));
 
-        Button radiusButton = Button.builder(radiusLabel(), button -> {
-                    this.radius = (this.radius + 1) % 17;
-                    button.setMessage(radiusLabel());
-                })
-                .bounds(left, firstRow + 72, buttonWidth, 20)
-                .build();
+        AbstractSliderButton radiusSlider = new AbstractSliderButton(
+                left,
+                firstRow + 72,
+                buttonWidth,
+                20,
+                radiusLabel(),
+                this.radius / 16.0D
+        ) {
+            @Override
+            protected void updateMessage() {
+                setMessage(radiusLabel());
+            }
+
+            @Override
+            protected void applyValue() {
+                radius = (int) Math.round(this.value * 16.0D);
+            }
+        };
+        radiusSlider.setTooltip(Tooltip.create(RADIUS_TOOLTIP));
+        this.addRenderableWidget(radiusSlider);
+
         this.addRenderableWidget(CycleButton.onOffBuilder(this.randomOrientation)
                 .withTooltip(value -> Tooltip.create(RANDOM_ORIENTATION_TOOLTIP))
                 .create(left, firstRow + 96, buttonWidth, 20, RANDOM_ORIENTATION,
                         (button, value) -> this.randomOrientation = value));
-        radiusButton.setTooltip(Tooltip.create(RADIUS_TOOLTIP));
-        this.addRenderableWidget(radiusButton);
 
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose())
                 .bounds(this.width / 2 - 100, this.height - 28, 200, 20)
