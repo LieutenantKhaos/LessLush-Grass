@@ -1,5 +1,16 @@
 # LessLush Grass Changelog
 
+## 1.4.1b
+
+### Added
+- Added five grass density settings: Extra Sparse, Sparse, Normal, Dense, and Extra Dense.
+
+### Changed
+- Rebalanced grass tuft density to make the differences between each setting more noticeable.
+- Reduced the default Normal density compared to the previous grass appearance.
+- Kept Dense approximately in line with the previous grass density.
+- Added stronger variation between sparse and dense grass settings.
+
 ## 1.4.0a
 
 ### Changed
@@ -33,7 +44,7 @@
 - Fluid detection is limited to the six cardinal directions; diagonal fluid does not suppress tufts.
 - Waterlogged blocks are not treated as standalone water sources.
 
-# LessLush Grass 1.3.9 Changelog
+## 1.3.9
 
 ## Added
 - Added two additional custom grass textures: `shorter_grass.png` and `shortest_grass.png`.
@@ -43,13 +54,13 @@
 - Texture selection is deterministic per grass block, so variants stay stable when chunks rebuild.
 - Existing fixed tuft height, natural density, developed-area suppression, and random rotation behavior are unchanged.
 
-# LessLush Grass 1.3.8 Changelog
+## 1.3.8
 
 ## Fixed
 - Fixed a Java compilation error introduced by the fixed-height tuft change.
 - Preserved the fixed tuft height while keeping the horizontal offset and random rotation behavior unchanged.
 
-# LessLush Grass 1.3.7 Changelog
+## 1.3.7
 
 ## Changed
 - Grass tuft height is now fixed, so every tuft renders at the same vertical height.
