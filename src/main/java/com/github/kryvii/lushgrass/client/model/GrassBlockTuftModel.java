@@ -25,18 +25,6 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
 
     private static final int TUFT_OFFSET_SEED_X = 17;
     private static final int TUFT_OFFSET_SEED_Z = 31;
-    // Keep the 1.1.9 vanilla-grass feel, but give the tuft a little
-    // horizontal breathing room so the vanilla texture does not read as
-    // unnaturally stretched when viewed at low height.
-    // Match the vanilla texture's aspect ratio more closely. The tuft is
-    // intentionally shorter than vanilla, so keeping nearly full width makes
-    // the texture look stretched. 65% width is a conservative compromise:
-    // noticeably tighter without turning each tuft into a tiny spike.
-    // Scale the vanilla tuft uniformly. This is the important difference
-    // from the earlier experiments: shortening only Y squashes the model
-    // while leaving its texture width unchanged, which makes the vanilla
-    // blades look stretched. Equal X/Z/Y scaling preserves the vanilla
-    // proportions while making the whole tuft smaller.
     private static final float TUFT_HORIZONTAL_SCALE = 1.0F;
     private static final float TUFT_VERTICAL_SCALE = 1.0F;
     private static final BlockState SHORT_GRASS_STATE = Blocks.SHORT_GRASS.defaultBlockState();
@@ -72,22 +60,16 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             RandomSource random,
             Predicate<@Nullable Direction> cullTest
     ) {
+        fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
 
-    fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
-
-        // Fabric uses BlockAndTintGetter.EMPTY when rebuilding model geometry
-        // for the block-breaking overlay. Keep decorative tufts out of that pass.
         if (blockView == BlockAndTintGetter.EMPTY || !shouldRenderTuft(blockView, state, pos)) {
-           return;
+            return;
         }
 
         BlockPos tuftPos = pos.above();
         Vec3 rawOffset = SHORT_GRASS_STATE.getOffset(
                 tuftPos.offset(TUFT_OFFSET_SEED_X, 0, TUFT_OFFSET_SEED_Z)
         );
-        // Keep the vanilla horizontal offset, but use a fixed vertical position
-        // so every tuft has exactly the same height. Keep this value final so it
-        // can safely be captured by the quad transform lambda.
         final Vec3 offset = new Vec3(rawOffset.x, 0.0D, rawOffset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
 
@@ -126,8 +108,6 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         Vec3 offset = SHORT_GRASS_STATE.getOffset(
                 tuftPos.offset(TUFT_OFFSET_SEED_X, 0, TUFT_OFFSET_SEED_Z)
         );
-        // Keep the vanilla horizontal offset, but use a fixed vertical position
-        // so every tuft has exactly the same height.
         offset = new Vec3(offset.x, 0.0D, offset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
         return new GeometryKey(baseKey, true, offset, packedLight, tuftRotation(pos), tuftVariant(pos));
@@ -182,10 +162,18 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         double medium = tuftValueNoise(pos.getX() * 0.34D + 91.0D, pos.getZ() * 0.34D - 47.0D);
         double patchNoise = broad * 0.70D + medium * 0.30D;
 
-        // Most wilderness remains lush, but some patches are deliberately open.
-        // The threshold is modulated by the noise, producing connected patches
-        // instead of simply removing every Nth grass block.
-        double density = 0.42D + patchNoise * 0.48D;
+        // The existing distribution is treated as the Dense level. Lower levels
+        // reduce the threshold while higher levels increase it, preserving the
+        // same natural patch shapes at every setting.
+        double baseDensity = 0.42D + patchNoise * 0.48D;
+        double densityMultiplier = switch (ClientConfig.grassDensity()) {
+            case 0 -> 0.25D; // Extra Sparse
+            case 1 -> 0.50D; // Sparse
+            case 3 -> 1.00D; // Dense (matches the previous behavior)
+            case 4 -> 1.30D; // Extra Dense
+            default -> 0.75D; // Normal
+        };
+        double density = Math.min(1.0D, baseDensity * densityMultiplier);
         return tuftHash(pos.getX(), pos.getZ()) < density;
     }
 
@@ -242,11 +230,6 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return (int) (tuftHash(pos.getX() + 137, pos.getZ() - 211) * 360.0D);
     }
 
-    /**
-     * Selects one of the three grass artwork variants deterministically from the
-     * grass block position. Keeping the selection position-based prevents the
-     * texture from changing when chunks rebuild.
-     */
     private static int tuftVariant(BlockPos pos) {
         return (int) (tuftHash(pos.getX() - 503, pos.getZ() + 719) * 3.0D);
     }

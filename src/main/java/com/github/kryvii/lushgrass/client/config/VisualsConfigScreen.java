@@ -21,6 +21,10 @@ final class VisualsConfigScreen extends Screen {
             Component.translatable("lush_grass.configuration.visuals.render_grass_tufts");
     private static final Component GRASS_TUFTS_TOOLTIP =
             Component.translatable("lush_grass.configuration.visuals.render_grass_tufts.tooltip");
+    private static final Component GRASS_DENSITY =
+            Component.translatable("lush_grass.configuration.visuals.grass_density");
+    private static final Component GRASS_DENSITY_TOOLTIP =
+            Component.translatable("lush_grass.configuration.visuals.grass_density.tooltip");
     private static final Component SUPPRESS_DEVELOPED =
             Component.translatable("lush_grass.configuration.developed.suppress_tufts");
     private static final Component SUPPRESS_DEVELOPED_TOOLTIP =
@@ -37,6 +41,7 @@ final class VisualsConfigScreen extends Screen {
     private final Screen parent;
     private boolean fullCoverage;
     private boolean grassTufts;
+    private int grassDensity;
     private boolean suppressDeveloped;
     private int radius;
     private boolean randomOrientation;
@@ -46,6 +51,7 @@ final class VisualsConfigScreen extends Screen {
         this.parent = parent;
         this.fullCoverage = ClientConfig.fullGrassBlockCoverage();
         this.grassTufts = ClientConfig.renderGrassTufts();
+        this.grassDensity = ClientConfig.grassDensity();
         this.suppressDeveloped = ClientConfig.suppressTuftsInDevelopedAreas();
         this.radius = ClientConfig.developedAreaRadius();
         this.randomOrientation = ClientConfig.randomizeTuftOrientation();
@@ -55,7 +61,7 @@ final class VisualsConfigScreen extends Screen {
     protected void init() {
         int buttonWidth = Math.min(310, this.width - 40);
         int left = (this.width - buttonWidth) / 2;
-        int firstRow = this.height / 2 - 70;
+        int firstRow = this.height / 2 - 82;
 
         this.addRenderableWidget(CycleButton.onOffBuilder(this.fullCoverage)
                 .withTooltip(value -> Tooltip.create(FULL_COVERAGE_TOOLTIP))
@@ -65,14 +71,37 @@ final class VisualsConfigScreen extends Screen {
                 .withTooltip(value -> Tooltip.create(GRASS_TUFTS_TOOLTIP))
                 .create(left, firstRow + 24, buttonWidth, 20, GRASS_TUFTS,
                         (button, value) -> this.grassTufts = value));
+
+        AbstractSliderButton densitySlider = new AbstractSliderButton(
+                left,
+                firstRow + 48,
+                buttonWidth,
+                20,
+                grassDensityLabel(),
+                this.grassDensity / 4.0D
+        ) {
+            @Override
+            protected void updateMessage() {
+                setMessage(grassDensityLabel());
+            }
+
+            @Override
+            protected void applyValue() {
+                grassDensity = Math.max(0, Math.min(4, (int) Math.round(this.value * 4.0D)));
+                this.value = grassDensity / 4.0D;
+            }
+        };
+        densitySlider.setTooltip(Tooltip.create(GRASS_DENSITY_TOOLTIP));
+        this.addRenderableWidget(densitySlider);
+
         this.addRenderableWidget(CycleButton.onOffBuilder(this.suppressDeveloped)
                 .withTooltip(value -> Tooltip.create(SUPPRESS_DEVELOPED_TOOLTIP))
-                .create(left, firstRow + 48, buttonWidth, 20, SUPPRESS_DEVELOPED,
+                .create(left, firstRow + 72, buttonWidth, 20, SUPPRESS_DEVELOPED,
                         (button, value) -> this.suppressDeveloped = value));
 
         AbstractSliderButton radiusSlider = new AbstractSliderButton(
                 left,
-                firstRow + 72,
+                firstRow + 96,
                 buttonWidth,
                 20,
                 radiusLabel(),
@@ -93,12 +122,19 @@ final class VisualsConfigScreen extends Screen {
 
         this.addRenderableWidget(CycleButton.onOffBuilder(this.randomOrientation)
                 .withTooltip(value -> Tooltip.create(RANDOM_ORIENTATION_TOOLTIP))
-                .create(left, firstRow + 96, buttonWidth, 20, RANDOM_ORIENTATION,
+                .create(left, firstRow + 120, buttonWidth, 20, RANDOM_ORIENTATION,
                         (button, value) -> this.randomOrientation = value));
 
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose())
                 .bounds(this.width / 2 - 100, this.height - 28, 200, 20)
                 .build());
+    }
+
+    private Component grassDensityLabel() {
+        return Component.translatable(
+                "lush_grass.configuration.visuals.grass_density",
+                Component.translatable("lush_grass.configuration.visuals.grass_density.value." + this.grassDensity)
+        );
     }
 
     private Component radiusLabel() {
@@ -107,7 +143,14 @@ final class VisualsConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        if (ClientConfig.update(this.fullCoverage, this.grassTufts, this.suppressDeveloped, this.radius, this.randomOrientation)) {
+        if (ClientConfig.update(
+                this.fullCoverage,
+                this.grassTufts,
+                this.grassDensity,
+                this.suppressDeveloped,
+                this.radius,
+                this.randomOrientation
+        )) {
             ClientConfig.save();
             ClientConfigEvents.refreshRenderer();
         }

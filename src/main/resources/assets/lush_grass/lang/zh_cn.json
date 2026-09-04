@@ -7,5 +7,18 @@
   "lush_grass.configuration.visuals.full_grass_block_coverage": "更好的草方块",
   "lush_grass.configuration.visuals.full_grass_block_coverage.tooltip": "改进原版草方块的外观。",
   "lush_grass.configuration.visuals.render_grass_tufts": "更茂盛的草",
-  "lush_grass.configuration.visuals.render_grass_tufts.tooltip": "在上方无遮挡的原版草方块上渲染短草，使草地看起来更加茂盛。"
+  "lush_grass.configuration.visuals.render_grass_tufts.tooltip": "在上方无遮挡的原版草方块上渲染短草，使草地看起来更加茂盛。",
+  "lush_grass.configuration.visuals.grass_density": "草的密度：%s",
+  "lush_grass.configuration.visuals.grass_density.tooltip": "控制装饰性草丛出现的频率。",
+  "lush_grass.configuration.visuals.grass_density.value.0": "极稀疏",
+  "lush_grass.configuration.visuals.grass_density.value.1": "稀疏",
+  "lush_grass.configuration.visuals.grass_density.value.2": "正常",
+  "lush_grass.configuration.visuals.grass_density.value.3": "茂密",
+  "lush_grass.configuration.visuals.grass_density.value.4": "极茂密",
+  "lush_grass.configuration.developed.suppress_tufts": "隐藏开发区域附近的草",
+  "lush_grass.configuration.developed.suppress_tufts.tooltip": "移除检测到的开发区域附近的装饰性草丛。",
+  "lush_grass.configuration.developed.radius": "开发区域半径：%s",
+  "lush_grass.configuration.developed.radius.tooltip": "开发区域检测器围绕检测到的方块生效的范围（0–16 格）。",
+  "lush_grass.configuration.visuals.randomize_tuft_orientation": "随机化草丛方向",
+  "lush_grass.configuration.visuals.randomize_tuft_orientation.tooltip": "为每个草丛提供一个稳定的随机水平旋转角度（0° 到 359°）。"
 }

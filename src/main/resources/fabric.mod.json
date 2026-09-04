@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "lush_grass",
-  "version": "1.3.12",
+  "version": "${mod_version}",
   "name": "LessLush Grass",
   "description": "Enhances vanilla grass blocks with configurable client-side lush visuals.",
   "authors": [

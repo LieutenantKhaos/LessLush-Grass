@@ -11,6 +11,20 @@ base {
     archivesName = archives_base_name
 }
 
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mod_version", mod_version
+    inputs.property "artifact_version_suffix", artifact_version_suffix
+
+    filesMatching("fabric.mod.json") {
+        expand(
+            "version": project.version,
+            "mod_version": mod_version,
+            "artifact_version_suffix": artifact_version_suffix
+        )
+    }
+}
+
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 loom {

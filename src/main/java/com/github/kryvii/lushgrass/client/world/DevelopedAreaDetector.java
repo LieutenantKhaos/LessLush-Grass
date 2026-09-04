@@ -314,8 +314,6 @@ public final class DevelopedAreaDetector {
             Blocks.CHERRY_FENCE_GATE,
             Blocks.BAMBOO_FENCE_GATE,
 
-            Blocks.CAMPFIRE,
-            Blocks.SOUL_CAMPFIRE,
             Blocks.LANTERN,
             Blocks.SOUL_LANTERN,
 
