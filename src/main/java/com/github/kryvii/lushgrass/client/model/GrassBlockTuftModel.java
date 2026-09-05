@@ -1,14 +1,12 @@
 package com.github.kryvii.lushgrass.client.model;
 
-import com.github.kryvii.lushgrass.config.ClientConfig;
 import com.github.kryvii.lushgrass.client.world.DevelopedAreaDetector;
-import java.util.List;
+import com.github.kryvii.lushgrass.config.ClientConfig;
 import java.util.function.Predicate;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.MutableQuadView;
 import net.fabricmc.fabric.api.client.renderer.v1.mesh.QuadEmitter;
 import net.minecraft.client.renderer.block.BlockAndTintGetter;
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
-import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
@@ -47,11 +45,6 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
     }
 
     @Override
-    public void collectParts(RandomSource random, List<BlockStateModelPart> parts) {
-        super.collectParts(random, parts);
-    }
-
-    @Override
     public void emitQuads(
             QuadEmitter emitter,
             BlockAndTintGetter blockView,
@@ -60,11 +53,13 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             RandomSource random,
             Predicate<@Nullable Direction> cullTest
     ) {
-        fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
+    fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
 
+        // Fabric uses BlockAndTintGetter.EMPTY when rebuilding model geometry
+        // for the block-breaking overlay. Keep decorative tufts out of that pass.
         if (blockView == BlockAndTintGetter.EMPTY || !shouldRenderTuft(blockView, state, pos)) {
-            return;
-        }
+       return;
+    }
 
         BlockPos tuftPos = pos.above();
         Vec3 rawOffset = SHORT_GRASS_STATE.getOffset(
@@ -73,14 +68,14 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         final Vec3 offset = new Vec3(rawOffset.x, 0.0D, rawOffset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
 
-        int rotation = tuftRotation(pos);
         int variant = tuftVariant(pos);
         BlockStateModel selectedTuftModel = switch (variant) {
             case 1 -> this.shorterTuftModel;
             case 2 -> this.shortestTuftModel;
             default -> this.tuftModel;
         };
-        emitter.pushTransform(quad -> transformTuftQuad(quad, offset, packedLight, rotation));
+
+        emitter.pushTransform(quad -> transformTuftQuad(quad, offset, packedLight));
         try {
             random.setSeed(42L);
             selectedTuftModel.emitQuads(emitter, blockView, tuftPos, SHORT_GRASS_STATE, random, cullTest);
@@ -101,7 +96,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             return null;
         }
         if (!shouldRenderTuft(blockView, state, pos)) {
-            return new GeometryKey(baseKey, false, Vec3.ZERO, 0, 0, 0);
+            return new GeometryKey(baseKey, false, Vec3.ZERO, 0, 0);
         }
 
         BlockPos tuftPos = pos.above();
@@ -110,7 +105,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         );
         offset = new Vec3(offset.x, 0.0D, offset.z);
         int packedLight = LightCoordsUtil.getLightCoords(blockView, tuftPos);
-        return new GeometryKey(baseKey, true, offset, packedLight, tuftRotation(pos), tuftVariant(pos));
+        return new GeometryKey(baseKey, true, offset, packedLight, tuftVariant(pos));
     }
 
     @Override
@@ -138,8 +133,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
     }
 
     private static boolean shouldRenderTuft(BlockAndTintGetter blockView, BlockState state, BlockPos pos) {
-        if (!ClientConfig.renderGrassTufts()
-                || !state.is(Blocks.GRASS_BLOCK)
+        if (!state.is(Blocks.GRASS_BLOCK)
                 || state.getValue(BlockStateProperties.SNOWY)
                 || DevelopedAreaDetector.isNearDevelopedArea(blockView, pos)
                 || !hasNaturalTuft(pos)) {
@@ -162,18 +156,10 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         double medium = tuftValueNoise(pos.getX() * 0.34D + 91.0D, pos.getZ() * 0.34D - 47.0D);
         double patchNoise = broad * 0.70D + medium * 0.30D;
 
-        // The existing distribution is treated as the Dense level. Lower levels
-        // reduce the threshold while higher levels increase it, preserving the
-        // same natural patch shapes at every setting.
-        double baseDensity = 0.42D + patchNoise * 0.48D;
-        double densityMultiplier = switch (ClientConfig.grassDensity()) {
-            case 0 -> 0.25D; // Extra Sparse
-            case 1 -> 0.50D; // Sparse
-            case 3 -> 1.00D; // Dense (matches the previous behavior)
-            case 4 -> 1.30D; // Extra Dense
-            default -> 0.75D; // Normal
-        };
-        double density = Math.min(1.0D, baseDensity * densityMultiplier);
+        // Most wilderness remains lush, but some patches are deliberately open.
+        // The threshold is modulated by the noise, producing connected patches
+        // instead of simply removing every Nth grass block.
+        double density = 0.42D + patchNoise * 0.48D;
         return tuftHash(pos.getX(), pos.getZ()) < density;
     }
 
@@ -223,31 +209,52 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         return a + (b - a) * t;
     }
 
-    private static int tuftRotation(BlockPos pos) {
-        if (!ClientConfig.randomizeTuftOrientation()) {
-            return 0;
-        }
-        return (int) (tuftHash(pos.getX() + 137, pos.getZ() - 211) * 360.0D);
-    }
-
     private static int tuftVariant(BlockPos pos) {
-        return (int) (tuftHash(pos.getX() - 503, pos.getZ() + 719) * 3.0D);
+        double value = tuftHash(
+                pos.getX() - 503,
+                pos.getZ() + 719
+        );
+
+        return switch (ClientConfig.tuftVariation()) {
+            case 0 -> {
+                // Fast: 75% tall, 25% medium, 0% shortest.
+                yield value < 0.75D ? 0 : 1;
+            }
+
+            case 2 -> {
+                // Fancy: 50% tall, 35% medium, 15% shortest.
+                if (value < 0.50D) {
+                    yield 0;
+                } else if (value < 0.85D) {
+                    yield 1;
+                } else {
+                    yield 2;
+                }
+            }
+
+            default -> {
+                // Normal: 60% tall, 30% medium, 10% shortest.
+                if (value < 0.60D) {
+                    yield 0;
+                } else if (value < 0.90D) {
+                    yield 1;
+                } else {
+                    yield 2;
+                }
+            }
+        };
     }
 
-    private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight, int rotationDegrees) {
-        double radians = Math.toRadians(rotationDegrees);
-        float sin = (float) Math.sin(radians);
-        float cos = (float) Math.cos(radians);
+    private static boolean transformTuftQuad(MutableQuadView quad, Vec3 offset, int packedLight) {
         for (int vertex = 0; vertex < 4; vertex++) {
             float x = (quad.x(vertex) - 0.5F) * TUFT_HORIZONTAL_SCALE;
             float z = (quad.z(vertex) - 0.5F) * TUFT_HORIZONTAL_SCALE;
-            float rotatedX = x * cos - z * sin;
-            float rotatedZ = x * sin + z * cos;
+
             quad.pos(
                     vertex,
-                    rotatedX + 0.5F + (float) offset.x,
+                    x + 0.5F + (float) offset.x,
                     quad.y(vertex) * TUFT_VERTICAL_SCALE + (float) (1.0D + offset.y),
-                    rotatedZ + 0.5F + (float) offset.z
+                    z + 0.5F + (float) offset.z
             );
             quad.lightmap(vertex, packedLight);
         }
@@ -261,7 +268,6 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             boolean tuft,
             Vec3 offset,
             int packedLight,
-            int rotationDegrees,
             int variant
     ) {
     }

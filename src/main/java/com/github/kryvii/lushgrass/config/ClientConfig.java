@@ -18,11 +18,10 @@ import net.fabricmc.loader.api.FabricLoader;
 
 public final class ClientConfig {
     private static final String FULL_COVERAGE_KEY = "full_grass_block_coverage";
-    private static final String GRASS_TUFTS_KEY = "render_grass_tufts";
     private static final String GRASS_DENSITY_KEY = "grass_density";
+    private static final String TUFT_VARIATION_KEY = "tuft_variation";
     private static final String SUPPRESS_DEVELOPED_KEY = "suppress_tufts_in_developed_areas";
     private static final String DEVELOPED_RADIUS_KEY = "developed_area_radius";
-    private static final String RANDOM_TUFT_ORIENTATION_KEY = "randomize_tuft_orientation";
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path CONFIG_FILE = FabricLoader.getInstance()
             .getConfigDir()
@@ -44,11 +43,10 @@ public final class ClientConfig {
             JsonObject object = element.getAsJsonObject();
             settings = new Settings(
                     readBoolean(object, FULL_COVERAGE_KEY, true),
-                    readBoolean(object, GRASS_TUFTS_KEY, true),
                     readInt(object, GRASS_DENSITY_KEY, 2, 0, 4),
+                    readInt(object, TUFT_VARIATION_KEY, 1, 0, 2),
                     readBoolean(object, SUPPRESS_DEVELOPED_KEY, true),
-                    readInt(object, DEVELOPED_RADIUS_KEY, 12, 0, 16),
-                    readBoolean(object, RANDOM_TUFT_ORIENTATION_KEY, true)
+                    readInt(object, DEVELOPED_RADIUS_KEY, 12, 0, 16)
             );
         } catch (IOException | RuntimeException exception) {
             settings = Settings.defaults();
@@ -61,11 +59,10 @@ public final class ClientConfig {
         Path temporaryFile = CONFIG_FILE.resolveSibling(CONFIG_FILE.getFileName() + ".tmp");
         JsonObject object = new JsonObject();
         object.addProperty(FULL_COVERAGE_KEY, settings.fullGrassBlockCoverage());
-        object.addProperty(GRASS_TUFTS_KEY, settings.renderGrassTufts());
         object.addProperty(GRASS_DENSITY_KEY, settings.grassDensity());
+        object.addProperty(TUFT_VARIATION_KEY, settings.tuftVariation());
         object.addProperty(SUPPRESS_DEVELOPED_KEY, settings.suppressTuftsInDevelopedAreas());
         object.addProperty(DEVELOPED_RADIUS_KEY, settings.developedAreaRadius());
-        object.addProperty(RANDOM_TUFT_ORIENTATION_KEY, settings.randomizeTuftOrientation());
 
         try {
             Files.createDirectories(CONFIG_FILE.getParent());
@@ -96,12 +93,12 @@ public final class ClientConfig {
         return settings.fullGrassBlockCoverage();
     }
 
-    public static boolean renderGrassTufts() {
-        return settings.renderGrassTufts();
-    }
-
     public static int grassDensity() {
         return settings.grassDensity();
+    }
+
+    public static int tuftVariation() {
+        return settings.tuftVariation();
     }
 
     public static boolean suppressTuftsInDevelopedAreas() {
@@ -112,25 +109,19 @@ public final class ClientConfig {
         return settings.developedAreaRadius();
     }
 
-    public static boolean randomizeTuftOrientation() {
-        return settings.randomizeTuftOrientation();
-    }
-
     public static synchronized boolean update(
             boolean fullGrassBlockCoverage,
-            boolean renderGrassTufts,
             int grassDensity,
+            int tuftVariation,
             boolean suppressTuftsInDevelopedAreas,
-            int developedAreaRadius,
-            boolean randomizeTuftOrientation
+            int developedAreaRadius
     ) {
         Settings updated = new Settings(
                 fullGrassBlockCoverage,
-                renderGrassTufts,
                 grassDensity,
+                tuftVariation,
                 suppressTuftsInDevelopedAreas,
-                developedAreaRadius,
-                randomizeTuftOrientation
+                developedAreaRadius
         );
         if (updated.equals(settings)) {
             return false;
@@ -165,27 +156,15 @@ public final class ClientConfig {
         return result;
     }
 
-    public static synchronized boolean update(boolean fullGrassBlockCoverage, boolean renderGrassTufts) {
-        return update(
-                fullGrassBlockCoverage,
-                renderGrassTufts,
-                settings.grassDensity(),
-                settings.suppressTuftsInDevelopedAreas(),
-                settings.developedAreaRadius(),
-                settings.randomizeTuftOrientation()
-        );
-    }
-
     private record Settings(
             boolean fullGrassBlockCoverage,
-            boolean renderGrassTufts,
             int grassDensity,
+            int tuftVariation,
             boolean suppressTuftsInDevelopedAreas,
-            int developedAreaRadius,
-            boolean randomizeTuftOrientation
+            int developedAreaRadius
     ) {
         private static Settings defaults() {
-            return new Settings(true, true, 2, true, 12, true);
+            return new Settings(true, 2, 1, true, 12);
         }
     }
 

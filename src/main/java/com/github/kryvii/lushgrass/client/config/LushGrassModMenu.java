@@ -6,6 +6,6 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 public final class LushGrassModMenu implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return LushGrassConfigScreen::new;
+        return VisualsConfigScreen::new;
     }
 }
