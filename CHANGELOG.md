@@ -1,5 +1,15 @@
 # LessLush Grass Changelog
 
+## 1.4.3r
+
+### Fixed
+- Fixed the block-breaking crack overlay appearing across grass tufts again.
+- Grass tufts are now excluded from Fabric's block-breaking overlay rendering pass.
+
+### Changed
+- Cleaned up the developed-area indicator scoring so campfires and soul campfires are treated consistently as strong development indicators.
+- Added more balanced spacing between the Grass Appearance and Developed Areas sections in the Visuals configuration screen.
+
 ## 1.4.1b
 
 ### Added
