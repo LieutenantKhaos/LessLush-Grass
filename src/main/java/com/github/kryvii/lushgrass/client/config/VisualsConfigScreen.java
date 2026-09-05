@@ -189,7 +189,7 @@ final class VisualsConfigScreen extends Screen {
         int firstRow = this.height / 2 - 94;
 
         graphics.centeredText(this.font, this.title, this.width / 2, 20, 0xFFFFFFFF);
-        graphics.centeredText(this.font, SECTION_GRASS_APPEARANCE, this.width / 2, firstRow - 18, 0xFFFFFFFF);
+        graphics.centeredText(this.font, SECTION_GRASS_APPEARANCE, this.width / 2, firstRow - 24, 0xFFFFFFFF);
         graphics.centeredText(this.font, SECTION_DEVELOPED_AREAS, this.width / 2, firstRow + 96, 0xFFFFFFFF);
     }
 }
