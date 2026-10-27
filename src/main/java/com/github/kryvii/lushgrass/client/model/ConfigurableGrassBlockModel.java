@@ -30,6 +30,8 @@ public class ConfigurableGrassBlockModel implements BlockStateModel, FabricBlock
 
     @Override
     public void collectParts(RandomSource random, List<BlockStateModelPart> parts) {
+        // Voxy 0.2.18 bakes this static path; keep position-dependent tufts out
+        // of its per-block-state atlas and expose the configured grass cube.
         this.activeModel().collectParts(random, parts);
     }
 

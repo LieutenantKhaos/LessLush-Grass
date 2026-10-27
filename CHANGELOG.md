@@ -1,5 +1,23 @@
 # LessLush Grass Changelog
 
+## 1.4.6
+
+### Compatibility
+- Refresh Voxy 0.2.18-beta's model atlas when Better Grass Blocks changes.
+- Expose configured grass-block sides through the static model path used by Voxy. Position-dependent tufts remain within normal terrain render distance.
+
+### Fixed
+- Connect the five grass-density settings to tuft placement, preserving the Normal distribution.
+- Prevent tufts from overlapping plants, fluids, snow layers, slabs and other occupied blocks.
+- Correct Sodium mixin registration and register the quad-tag accessor used by Iris support.
+- Restore Iris tuft materials after each quad.
+- Skip tuft world checks for the empty breaking-overlay view in geometry-key and material-flag paths.
+- Clear developed-area detection results before rebuilding terrain after configuration changes.
+- Reject fractional and overflowing integer configuration values.
+
+### Validation
+- Add regression tests for static model selection and numeric configuration parsing.
+
 ## 1.4.3r
 
 ### Fixed

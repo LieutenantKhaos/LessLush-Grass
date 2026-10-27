@@ -35,6 +35,7 @@
   "suggests": {
     "modmenu": "*",
     "sodium": "*",
-    "iris": "*"
+    "iris": "*",
+    "voxy": "0.2.18-beta"
   }
 }

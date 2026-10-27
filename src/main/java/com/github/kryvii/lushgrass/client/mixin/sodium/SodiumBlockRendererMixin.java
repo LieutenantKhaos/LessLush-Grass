@@ -50,7 +50,7 @@ public abstract class SodiumBlockRendererMixin {
         }
     }
 
-    @Inject(method = "renderModel", at = @At("RETURN"))
+    @Inject(method = "processQuad", at = @At("RETURN"))
     private void lushGrass$endTuftMaterial(CallbackInfo callback) {
         if (!this.lushGrass$tuftMaterialActive) {
             return;

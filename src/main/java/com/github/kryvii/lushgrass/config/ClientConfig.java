@@ -149,7 +149,7 @@ public final class ClientConfig {
         if (!value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber()) {
             throw new IllegalArgumentException("Config value must be a number: " + key);
         }
-        int result = value.getAsInt();
+        int result = value.getAsBigDecimal().intValueExact();
         if (result < min || result > max) {
             throw new IllegalArgumentException("Config value out of range: " + key);
         }

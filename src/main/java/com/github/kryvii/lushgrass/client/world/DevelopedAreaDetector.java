@@ -83,6 +83,10 @@ public final class DevelopedAreaDetector {
         return developed;
     }
 
+    public static void clearCache() {
+        RESULT_CACHE.clear();
+    }
+
     private static void ensureCacheForWorld(BlockAndTintGetter world, int radius) {
         if (cachedWorld == world && cachedRadius == radius) {
             return;

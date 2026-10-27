@@ -167,6 +167,7 @@ final class VisualsConfigScreen extends Screen {
 
     @Override
     public void onClose() {
+        boolean coverageChanged = this.fullCoverage != ClientConfig.fullGrassBlockCoverage();
         if (ClientConfig.update(
                 this.fullCoverage,
                 this.grassDensity,
@@ -175,7 +176,7 @@ final class VisualsConfigScreen extends Screen {
                 this.radius
         )) {
             ClientConfig.save();
-            ClientConfigEvents.refreshRenderer();
+            ClientConfigEvents.refreshRenderer(coverageChanged);
         }
         if (this.minecraft != null) {
             this.minecraft.gui.setScreen(this.parent);

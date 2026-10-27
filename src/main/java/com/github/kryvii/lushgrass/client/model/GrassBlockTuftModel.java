@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -53,13 +52,13 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             RandomSource random,
             Predicate<@Nullable Direction> cullTest
     ) {
-    fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
+        fabricModel(this.activeModel()).emitQuads(emitter, blockView, pos, state, random, cullTest);
 
         // Fabric uses BlockAndTintGetter.EMPTY when rebuilding model geometry
         // for the block-breaking overlay. Keep decorative tufts out of that pass.
         if (blockView == BlockAndTintGetter.EMPTY || !shouldRenderTuft(blockView, state, pos)) {
-       return;
-    }
+            return;
+        }
 
         BlockPos tuftPos = pos.above();
         Vec3 rawOffset = SHORT_GRASS_STATE.getOffset(
@@ -79,7 +78,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         emitter.pushTransform(quad -> transformTuftQuad(quad, offset, packedLight, rotation));
         try {
             random.setSeed(42L);
-            selectedTuftModel.emitQuads(emitter, blockView, tuftPos, SHORT_GRASS_STATE, random, cullTest);
+            fabricModel(selectedTuftModel).emitQuads(emitter, blockView, tuftPos, SHORT_GRASS_STATE, random, cullTest);
         } finally {
             emitter.popTransform();
         }
@@ -96,7 +95,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         if (baseKey == null) {
             return null;
         }
-        if (!shouldRenderTuft(blockView, state, pos)) {
+        if (blockView == BlockAndTintGetter.EMPTY || !shouldRenderTuft(blockView, state, pos)) {
             return new GeometryKey(baseKey, false, Vec3.ZERO, 0, 0, 0);
         }
 
@@ -125,7 +124,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
             RandomSource random
     ) {
         int flags = super.materialFlags(blockView, pos, state, random);
-        return shouldRenderTuft(blockView, state, pos)
+        return blockView != BlockAndTintGetter.EMPTY && shouldRenderTuft(blockView, state, pos)
                 ? flags
                 | this.tuftModel.materialFlags()
                 | this.shorterTuftModel.materialFlags()
@@ -143,7 +142,7 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
 
         BlockPos tuftPos = pos.above();
         BlockState aboveState = blockView.getBlockState(tuftPos);
-        return !Block.isShapeFullBlock(aboveState.getCollisionShape(blockView, tuftPos));
+        return aboveState.isAir();
     }
 
     /**
@@ -160,7 +159,8 @@ public final class GrassBlockTuftModel extends ConfigurableGrassBlockModel {
         // Most wilderness remains lush, but some patches are deliberately open.
         // The threshold is modulated by the noise, producing connected patches
         // instead of simply removing every Nth grass block.
-        double density = 0.42D + patchNoise * 0.48D;
+        double density = Math.clamp(0.42D + patchNoise * 0.48D
+                + (ClientConfig.grassDensity() - 2) * 0.16D, 0.0D, 1.0D);
         return tuftHash(pos.getX(), pos.getZ()) < density;
     }
 

@@ -34,3 +34,19 @@ Works well with [Rainbow's Foliage w/ Polytone](https://modrinth.com/resourcepac
 ## Credits
 
 Originally based on [Lush Grass](https://www.curseforge.com/minecraft/mc-mods/lush-grass).
+
+## Fabric 26.2 / Voxy compatibility (1.4.6)
+
+Voxy 0.2.18-beta can bake the selected grass-block sides. Changing Better Grass
+Blocks refreshes Voxy's model atlas. Decorative tufts and developed-area
+suppression remain within normal terrain render distance.
+
+LessLush contains grass rendering and configuration. Distant beacon rendering
+is provided separately by the optional Voxy Beacon Beams addon; it is not required
+by LessLush.
+
+This update fixes grass density selection, tuft overlap, Sodium/Iris integration,
+breaking-overlay checks and numeric config validation. Existing grass settings
+keep their names. See CHANGELOG.md for details.
+
+Build with Java 25: `./gradlew clean build` (Windows: `gradlew.bat clean build`).
