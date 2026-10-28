@@ -31,7 +31,7 @@ loom {
     runs {
         client {
             client()
-            runDir = 'run/fabric-26.2'
+            runDir = 'run/fabric-26.3'
             ideConfigGenerated = true
         }
     }

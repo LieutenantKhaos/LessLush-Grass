@@ -1,3 +1,11 @@
+# LessLush Grass 1.5.0-beta.1 — Minecraft 26.3
+
+- Target Minecraft 26.3, Java 25, Fabric Loader 0.20.1 and Fabric API 0.165.0+26.3.
+- Update optional Mod Menu to 21.0.0 and Gradle to 9.6.0.
+- Preserve 1.4.6 Voxy grass support, density selection, overlap protection, Iris material restoration, config cache invalidation and numeric validation.
+- Keep the Voxy Beacon Beams addon separate.
+- Clean build and both existing regression tests pass. Client visuals and optional Voxy/Sodium/Iris integrations need 26.3 playtesting.
+
 # LessLush Grass Changelog
 
 ## 1.4.6
