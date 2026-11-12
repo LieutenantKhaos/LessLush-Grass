@@ -2,6 +2,9 @@
 
 ## 1.4.6
 
+### Changed
+- Updated the mod, Mod Menu, and documentation icons with new sky-blue grass-block artwork.
+
 ### Compatibility
 - Refresh Voxy 0.2.18-beta's model atlas when Better Grass Blocks changes.
 - Expose configured grass-block sides through the static model path used by Voxy. Position-dependent tufts remain within normal terrain render distance.
